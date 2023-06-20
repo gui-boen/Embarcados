@@ -1,0 +1,39 @@
+
+#include "SoftwareSerial.h"
+#include <PulseSensorPlayground.h>
+#include <Adafruit_MLX90614.h>
+
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+SoftwareSerial bt(0,1);
+const int PulseWire = A0;
+const int Threshold = 550;
+PulseSensorPlayground pulseSensor;
+
+void setup() {
+  Serial.begin(9600);
+  bt.begin(9600);
+
+  while (!Serial);
+
+  pulseSensor.analogInput(PulseWire);   
+  pulseSensor.setThreshold(Threshold);   
+  if (!mlx.begin()) {
+    Serial.println("Error connecting to MLX sensor. Check wiring.");
+    while (1);
+  };
+  
+}
+
+void loop() {
+  
+  
+
+  int myBPM = pulseSensor.getBeatsPerMinute();  // Calls function on our pulseSensor object that returns BPM as an "int".
+  Serial.print("Temperatura = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
+  Serial.println("♥  A HeartBeat Happened ! "); // If test is "true", print a message "a heartbeat happened".
+  Serial.print("BPM: ");                        // Print phrase "BPM: " 
+  Serial.println(myBPM);            
+  delay(2000);           // Print the value inside of myBPM. 
+
+}
+
