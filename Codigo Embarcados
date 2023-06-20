@@ -28,12 +28,12 @@ void loop() {
   
   
 
-  int myBPM = pulseSensor.getBeatsPerMinute();  // Calls function on our pulseSensor object that returns BPM as an "int".
+  int myBPM = pulseSensor.getBeatsPerMinute();  
   Serial.print("Temperatura = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
-  Serial.println("♥  A HeartBeat Happened ! "); // If test is "true", print a message "a heartbeat happened".
-  Serial.print("BPM: ");                        // Print phrase "BPM: " 
+  Serial.println("♥  A HeartBeat Happened ! "); 
+  Serial.print("BPM: ");                       
   Serial.println(myBPM);            
-  delay(2000);           // Print the value inside of myBPM. 
+  delay(2000);           
 
 }
 
