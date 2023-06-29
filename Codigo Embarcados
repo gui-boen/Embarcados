@@ -1,39 +1,58 @@
-
-#include "SoftwareSerial.h"
-#include <PulseSensorPlayground.h>
+#define USE_ARDUINO_INTERRUPTS true
+#include <Buzzer.h>
+#include <PulseSensorPlayground.h> 
+#include "BluetoothSerial.h"
 #include <Adafruit_MLX90614.h>
-
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
-SoftwareSerial bt(0,1);
-const int PulseWire = A0;
-const int Threshold = 550;
+BluetoothSerial SerialBT;
+const int pulsesensorpin = 34;
+int Threshold = 550;
 PulseSensorPlayground pulseSensor;
-
+int a =0;
+Buzzer buzzer(35);
 void setup() {
-  Serial.begin(9600);
-  bt.begin(9600);
+  Serial.begin(115200);
+  SerialBT.begin("RedeESP32");
+  pulseSensor.analogInput(pulsesensorpin);
+  pulseSensor.setThreshold(Threshold);   
 
   while (!Serial);
 
-  pulseSensor.analogInput(PulseWire);   
-  pulseSensor.setThreshold(Threshold);   
+  Serial.println("Adafruit MLX90614 test");
+
   if (!mlx.begin()) {
     Serial.println("Error connecting to MLX sensor. Check wiring.");
     while (1);
   };
+
+  Serial.print("Emissivity = "); Serial.println(mlx.readEmissivity());
+  Serial.println("================================================");
+  // put your setup code here, to run once:
+  analogReadResolution(12);
+  if (pulseSensor.begin()) {
+    Serial.println("We created a pulseSensor Object !");  //This prints one time at Arduino power-up,  or on Arduino reset.  
+  }
   
+
 }
 
 void loop() {
-  
+  buzzer.begin(0);
+  int temperatura = mlx.readObjectTempC();
+  int pulsev = analogRead(pulsesensorpin);
+  SerialBT.print(temperatura);
+  SerialBT.print("|");
+  if (pulsev>1600 and pulsev<3000){
+    SerialBT.print(pulsev/25);
+  }
+  SerialBT.print("|");
+  SerialBT.print(a);
+  a = a +1;
+           // Print the value inside of myBPM. 
+
+                       // Print the value inside of myBPM. 
   
 
-  int myBPM = pulseSensor.getBeatsPerMinute();  
-  Serial.print("Temperatura = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
-  Serial.println("♥  A HeartBeat Happened ! "); 
-  Serial.print("BPM: ");                       
-  Serial.println(myBPM);            
-  delay(2000);           
-
+  // put your main code here, to run repeatedly:
+  delay(4000);
 }
-
